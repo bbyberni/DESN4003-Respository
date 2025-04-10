@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background-color: #f8f9fa;
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .top-header a {
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .top-header a:hover {
+            background-color: #e9ecef;
+        }
+
+        .account-btn {
+            background-color: #28a745;
+            color: white !important;
+        }
+
+        .page-container {
+            display: flex;
+            min-height: calc(100vh - 57px); /* Subtract header height */
+        }
+
+        .side-nav {
+            width: 250px;
+            background-color: white;
+            border-right: 1px solid #dee2e6;
+            padding: 2rem 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 57px);
+        }
+
+        .nav-item {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .nav-item.active {
+            background-color: #e7f3ff;
+            color: #007bff;
+            border-right: 3px solid #007bff;
+        }
+
+        .nav-logout {
+            margin-top: auto;
+            padding: 1rem 2rem;
+            background-color: #dc3545;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logout:hover {
+            background-color: #c82333;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+
+        .content-section {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .section-header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .bookmarks-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .settings-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .save-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .save-btn:hover {
+            background-color: #218838;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin-left: 1rem;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .section h2 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .bookmarks-section {
+            margin-top: 2rem;
+        }
+
+        .folder-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .folder-tab {
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .folder-tab:hover {
+            background: #e9ecef;
+        }
+
+        .folder-tab.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .bookmark-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .bookmark-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+
+        .bookmark-title {
+            color: #1a0dab;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .bookmark-link {
+            color: #006621;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .bookmark-snippet {
+            color: #545454;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .bookmark-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .bookmark-btn {
+            padding: 0.25rem 0.75rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .bookmark-btn.move {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .bookmark-btn.delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .folder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .folder-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .result-tags {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+        }
+
+        .tag.country {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .tag.query {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
+        .empty-folder {
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .share-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .share-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #1a73e8;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .share-button:hover {
+            background-color: #1557b0;
+        }
+
+        .share-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            min-width: 300px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            z-index: 1000;
+            margin-top: 0.5rem;
+        }
+
+        .share-menu.active {
+            display: block;
+        }
+
+        .share-menu-header {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .share-menu-content {
+            padding: 1rem;
+        }
+
+        .share-menu-footer {
+            padding: 1rem;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .share-input-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .share-input-container input {
+            flex-grow: 1;
+            padding: 0.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+
+        .share-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .share-option:hover {
+            background-color: #f8f9fa;
+        }
+
+        .share-option-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .visibility-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .visibility-toggle:hover {
+            background-color: #f8f9fa;
+        }
+
+        .copy-link-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .folder-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <a href="index.html">Home</a>
+        <a href="search.html">Search Library</a>
+        <a href="published-folders.html">Published Folders</a>
+        <a href="account.html" class="account-btn" id="loginTab">My Account</a>
+    </div>
+
+    <div class="page-container">
+        <nav class="side-nav">
+            <div class="nav-item active" onclick="showSection('bookmarks')">
+                <span>📚 My Bookmarks</span>
+            </div>
+            <div class="nav-item" onclick="showSection('settings')">
+                <span>⚙️ Account Settings</span>
+            </div>
+            <div class="nav-logout" onclick="handleLogout()">
+                <span>🚪 Log Out</span>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Bookmarks Section -->
+            <section id="bookmarks-section" class="content-section active">
+                <div class="section-header">
+                    <h1>My Bookmarks</h1>
+                    <p>Manage your saved resources</p>
+                </div>
+
+                <div class="bookmarks-container">
+                    <div class="folder-header">
+                        <div class="folder-title"></div>
+                        <div class="folder-actions">
+                            <button class="save-btn" onclick="createNewFolder()">New Folder</button>
+                        </div>
+                    </div>
+                    
+                    <div class="folder-tabs" id="folderTabs">
+                        <!-- Folder tabs will be populated here -->
+                    </div>
+
+                    <div id="bookmarksList" class="bookmark-list">
+                        <!-- Bookmarks will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section">
+                <div class="section-header">
+                    <h1>Account Settings</h1>
+                    <p>Manage your account preferences and information</p>
+                </div>
+
+                <div class="settings-container">
+                    <div id="successMessage" class="success-message">
+                        Changes saved successfully!
+                    </div>
+
+                    <div class="section">
+                        <h2>Profile Information</h2>
+                        <form id="profileForm" onsubmit="handleProfileUpdate(event)">
+                            <div class="form-group">
+                                <label for="displayName">Display Name</label>
+                                <input type="text" id="displayName" name="displayName">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" readonly>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="section">
+                        <h2>Change Password</h2>
+                        <form id="passwordForm" onsubmit="handlePasswordChange(event)">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" name="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" name="newPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            </div>
+                            <button type="submit" class="save-btn">Change Password</button>
+                        </form>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 2rem;">
+                        <button type="button" class="save-btn" onclick="handleProfileUpdate(event)">Save Changes</button>
+                        <button type="button" class="logout-btn" onclick="handleLogout()">Log Out</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+            }
+            updateHeaderTabs();
+        }
+
+        // Update header tabs based on login status
+        function updateHeaderTabs() {
+            const loginTab = document.getElementById('loginTab');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+                loginTab.textContent = 'My Account';
+                loginTab.href = 'account.html';
+                loginTab.classList.add('account-btn');
+            } else {
+                loginTab.textContent = 'Log in';
+                loginTab.href = 'login.html';
+                loginTab.classList.remove('account-btn');
+            }
+        }
+
+        // Load user data
+        function loadUserData() {
+            const email = localStorage.getItem('userEmail');
+            document.getElementById('email').value = email || '';
+            const displayName = localStorage.getItem('displayName');
+            if (displayName) {
+                document.getElementById('displayName').value = displayName;
+            }
+        }
+
+        // Handle profile update
+        function handleProfileUpdate(event) {
+            event.preventDefault();
+            const displayName = document.getElementById('displayName').value;
+            localStorage.setItem('displayName', displayName);
+            showSuccessMessage();
+        }
+
+        // Handle password change
+        function handlePasswordChange(event) {
+            event.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+
+            // Here you would typically validate with backend
+            // For demo, we'll just show success
+            showSuccessMessage();
+            event.target.reset();
+        }
+
+        // Handle logout
+        function handleLogout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'index.html';
+        }
+
+        // Show success message
+        function showSuccessMessage() {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Add these new functions
+        function loadBookmarks() {
+            const folders = JSON.parse(localStorage.getItem('bookmarkFolders')) || [];
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
+            
+            // Populate folder tabs
+            const folderTabs = document.getElementById('folderTabs');
+            folderTabs.innerHTML = '';
+            
+            folders.forEach(folder => {
+                const tab = document.createElement('div');
+                tab.className = 'folder-tab';
+                tab.textContent = `${folder.name} (${bookmarks[folder.id]?.length || 0})`;
+                tab.onclick = () => showFolderBookmarks(folder.id);
+                folderTabs.appendChild(tab);
+            });
+
+            // Show first folder's bookmarks by default
+            if (folders.length > 0) {
+                showFolderBookmarks(folders[0].id);
+            }
+        }
+
+        function showFolderBookmarks(folderId) {
+            const folders = JSON.parse(localStorage.getItem('bookmarkFolders')) || [];
+            const currentFolder = folders.find(f => f.id === folderId);
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
+            const folderBookmarks = bookmarks[folderId] || [];
+            
+            // Update folder title and add share button
+            const bookmarksList = document.getElementById('bookmarksList');
+            bookmarksList.innerHTML = '';
+
+            // Add folder header with share button
+            const folderHeader = document.createElement('div');
+            folderHeader.className = 'folder-content-header';
+            folderHeader.style.display = 'flex';
+            folderHeader.style.justifyContent = 'space-between';
+            folderHeader.style.alignItems = 'center';
+            folderHeader.style.marginBottom = '1.5rem';
+            folderHeader.style.padding = '1rem';
+            folderHeader.style.backgroundColor = '#f8f9fa';
+            folderHeader.style.borderRadius = '4px';
+
+            const folderInfo = document.createElement('div');
+            folderInfo.innerHTML = `
+                <h2 style="margin: 0; color: #333;">${currentFolder.name}</h2>
+                <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">
+                    ${folderBookmarks.length} bookmark${folderBookmarks.length !== 1 ? 's' : ''}
+                </p>
+            `;
+
+            const shareDropdown = document.createElement('div');
+            shareDropdown.className = 'share-dropdown';
+            shareDropdown.innerHTML = `
+                <button class="share-button" onclick="toggleShareMenu(event, '${folderId}')">
+                    <span>🔗</span>
+                    Share
+                </button>
+                <div class="share-menu" id="shareMenu_${folderId}">
+                    <div class="share-menu-header">
+                        <h3>Share "${currentFolder.name}"</h3>
+                    </div>
+                    <div class="share-menu-content">
+                        <div class="visibility-toggle" onclick="toggleVisibility('${folderId}')">
+                            <span id="visibilityIcon_${folderId}">🔒</span>
+                            <span id="visibilityText_${folderId}">Private</span>
+                        </div>
+                        
+                        <div class="share-input-container">
+                            <input type="email" placeholder="Add people by email" id="shareEmail_${folderId}">
+                            <button class="save-btn" onclick="addSharedUser('${folderId}')">Send</button>
+                        </div>
+                        
+                        <div id="sharedUsersList_${folderId}">
+                            <!-- Shared users will be listed here -->
+                        </div>
+                        
+                        <div class="share-option" onclick="copyShareLink('${folderId}')">
+                            <span class="share-option-icon">🔗</span>
+                            <span>Copy link</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            folderHeader.appendChild(folderInfo);
+            folderHeader.appendChild(shareDropdown);
+            bookmarksList.appendChild(folderHeader);
+            
+            // Update the sharing status display
+            const folderSettings = folderSharing[folderId] || { type: 'private', users: [] };
+            const visibilityIcon = document.getElementById(`visibilityIcon_${folderId}`);
+            const visibilityText = document.getElementById(`visibilityText_${folderId}`);
+            if (visibilityIcon && visibilityText) {
+                visibilityIcon.textContent = folderSettings.type === 'private' ? '🔒' : '👥';
+                visibilityText.textContent = folderSettings.type === 'private' ? 'Private' : 'Public';
+            }
+
+            // Display bookmarks
+            if (folderBookmarks.length === 0) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-folder';
+                emptyState.innerHTML = `
+                    <p style="text-align: center; color: #666; padding: 2rem;">
+                        No bookmarks in this folder yet.<br>
+                        Bookmark search results to add them here.
+                    </p>
+                `;
+                bookmarksList.appendChild(emptyState);
+                return;
+            }
+            
+            const bookmarksContainer = document.createElement('div');
+            bookmarksContainer.className = 'bookmark-list';
+            
+            folderBookmarks.forEach(bookmark => {
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark-item';
+                
+                const countryTags = bookmark.countries ? bookmark.countries.split(',').map(country => 
+                    `<span class="tag country">${country.trim()}</span>`
+                ).join('') : '';
+                
+                const queryTag = `<span class="tag query">${bookmark.query}</span>`;
+                
+                bookmarkElement.innerHTML = `
+                    <a href="${bookmark.link}" class="bookmark-title" target="_blank">${bookmark.title}</a>
+                    <span class="bookmark-link">${bookmark.link}</span>
+                    <p class="bookmark-snippet">${bookmark.snippet}</p>
+                    <div class="result-tags">
+                        ${queryTag}
+                        ${countryTags}
+                    </div>
+                    <div class="bookmark-actions">
+                        <button class="bookmark-btn move" onclick="moveBookmark('${bookmark.link}')">Move</button>
+                        <button class="bookmark-btn delete" onclick="deleteBookmark('${bookmark.link}', '${folderId}')">Delete</button>
+                    </div>
+                `;
+                bookmarksContainer.appendChild(bookmarkElement);
+            });
+            
+            bookmarksList.appendChild(bookmarksContainer);
+            
+            // Update active tab
+            document.querySelectorAll('.folder-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            const folderTab = Array.from(document.querySelectorAll('.folder-tab'))
+                .find(tab => tab.textContent.includes(currentFolder?.name));
+            if (folderTab) {
+                folderTab.classList.add('active');
+            }
+        }
+
+        function createNewFolder() {
+            const folderName = prompt('Enter new folder name:');
+            if (folderName) {
+                const folders = JSON.parse(localStorage.getItem('bookmarkFolders')) || [];
+                const newFolder = {
+                    id: 'folder_' + Date.now(),
+                    name: folderName
+                };
+                folders.push(newFolder);
+                localStorage.setItem('bookmarkFolders', JSON.stringify(folders));
+                
+                // Initialize the new folder in bookmarks
+                const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
+                bookmarks[newFolder.id] = [];
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                
+                loadBookmarks();
+                // Show the new folder's contents immediately
+                showFolderBookmarks(newFolder.id);
+                
+                // Highlight the new folder tab
+                setTimeout(() => {
+                    const newTab = Array.from(document.querySelectorAll('.folder-tab'))
+                        .find(tab => tab.textContent.includes(folderName));
+                    if (newTab) {
+                        newTab.classList.add('active');
+                        // Scroll the new tab into view if necessary
+                        newTab.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 100);
+            }
+        }
+
+        function moveBookmark(bookmarkLink) {
+            const folders = JSON.parse(localStorage.getItem('bookmarkFolders')) || [];
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
+            
+            let bookmark;
+            let currentFolderId;
+            
+            // Find the bookmark and its current folder
+            for (const [folderId, folderBookmarks] of Object.entries(bookmarks)) {
+                const found = folderBookmarks.find(b => b.link === bookmarkLink);
+                if (found) {
+                    bookmark = found;
+                    currentFolderId = folderId;
+                    break;
+                }
+            }
+            
+            if (!bookmark) return;
+            
+            // Ask user to select new folder
+            const newFolderId = prompt(
+                'Enter folder number to move to:\n' + 
+                folders.map((f, i) => `${i + 1}: ${f.name}`).join('\n')
+            );
+            
+            if (newFolderId && folders[newFolderId - 1]) {
+                const targetFolderId = folders[newFolderId - 1].id;
+                
+                // Remove from current folder
+                bookmarks[currentFolderId] = bookmarks[currentFolderId].filter(b => b.link !== bookmarkLink);
+                
+                // Add to new folder
+                if (!bookmarks[targetFolderId]) {
+                    bookmarks[targetFolderId] = [];
+                }
+                bookmarks[targetFolderId].push(bookmark);
+                
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                loadBookmarks();
+            }
+        }
+
+        function deleteBookmark(bookmarkLink, folderId) {
+            if (confirm('Are you sure you want to delete this bookmark?')) {
+                const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
+                bookmarks[folderId] = bookmarks[folderId].filter(b => b.link !== bookmarkLink);
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                showFolderBookmarks(folderId);
+                loadBookmarks();
+            }
+        }
+
+        function showSection(sectionName) {
+            // Update navigation items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.nav-item:nth-child(${sectionName === 'bookmarks' ? 1 : 2})`).classList.add('active');
+
+            // Update content sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${sectionName}-section`).classList.add('active');
+        }
+
+        // Initialize page with bookmarks view
+        window.addEventListener('load', () => {
+            checkAuth();
+            loadUserData();
+            loadBookmarks();
+            showSection('bookmarks');
+        });
+
+        let currentFolderId = null;
+        let folderSharing = JSON.parse(localStorage.getItem('folderSharing')) || {};
+
+        function toggleShareMenu(event, folderId) {
+            event.stopPropagation();
+            const menu = document.getElementById(`shareMenu_${folderId}`);
+            
+            // Close all other menus first
+            document.querySelectorAll('.share-menu').forEach(m => {
+                if (m.id !== `shareMenu_${folderId}`) {
+                    m.classList.remove('active');
+                }
+            });
+            
+            menu.classList.toggle('active');
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function closeMenu(e) {
+                if (!menu.contains(e.target) && !e.target.matches('.share-button')) {
+                    menu.classList.remove('active');
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
+        }
+
+        function toggleVisibility(folderId) {
+            if (!folderSharing[folderId]) {
+                folderSharing[folderId] = { type: 'private', users: [] };
+            }
+            
+            const newType = folderSharing[folderId].type === 'private' ? 'public' : 'private';
+            folderSharing[folderId].type = newType;
+            
+            const icon = document.getElementById(`visibilityIcon_${folderId}`);
+            const text = document.getElementById(`visibilityText_${folderId}`);
+            
+            icon.textContent = newType === 'private' ? '🔒' : '👥';
+            text.textContent = newType === 'private' ? 'Private' : 'Public';
+            
+            localStorage.setItem('folderSharing', JSON.stringify(folderSharing));
+            updateFolderDisplay();
+        }
+
+        function addSharedUser(folderId) {
+            const email = document.getElementById(`shareEmail_${folderId}`).value;
+            
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            if (!folderSharing[folderId]) {
+                folderSharing[folderId] = { type: 'private', users: [] };
+            }
+            
+            // Check if user is already added
+            const existingUser = folderSharing[folderId].users.find(u => u.email === email);
+            if (existingUser) {
+                existingUser.access = 'view'; // Default to view access
+            } else {
+                folderSharing[folderId].users.push({ email, access: 'view' });
+            }
+            
+            localStorage.setItem('folderSharing', JSON.stringify(folderSharing));
+            document.getElementById(`shareEmail_${folderId}`).value = '';
+            updateSharedUsersList(folderId);
+            updateFolderDisplay();
+        }
+
+        function updateSharedUsersList(folderId) {
+            const container = document.getElementById(`sharedUsersList_${folderId}`);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (!folderSharing[folderId]) return;
+            
+            folderSharing[folderId].users.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.className = 'shared-user';
+                userElement.innerHTML = `
+                    <div class="shared-user-email">${user.email}</div>
+                    <select class="shared-user-access" onchange="updateUserAccess('${folderId}', '${user.email}', this.value)">
+                        <option value="view" ${user.access === 'view' ? 'selected' : ''}>Can view</option>
+                        <option value="edit" ${user.access === 'edit' ? 'selected' : ''}>Can edit</option>
+                    </select>
+                    <button class="bookmark-btn delete" onclick="removeSharedUser('${folderId}', '${user.email}')">Remove</button>
+                `;
+                container.appendChild(userElement);
+            });
+        }
+
+        function updateUserAccess(folderId, email, access) {
+            const user = folderSharing[folderId].users.find(u => u.email === email);
+            if (user) {
+                user.access = access;
+                localStorage.setItem('folderSharing', JSON.stringify(folderSharing));
+            }
+        }
+
+        function removeSharedUser(folderId, email) {
+            folderSharing[folderId].users = folderSharing[folderId].users.filter(u => u.email !== email);
+            localStorage.setItem('folderSharing', JSON.stringify(folderSharing));
+            updateSharedUsersList(folderId);
+            updateFolderDisplay();
+        }
+
+        function copyShareLink(folderId) {
+            const shareLink = `${window.location.origin}/shared-folder/${folderId}`;
+            navigator.clipboard.writeText(shareLink).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        }
+
+        function updateFolderDisplay() {
+            const folders = JSON.parse(localStorage.getItem('bookmarkFolders')) || [];
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
+            
+            const folderTabs = document.getElementById('folderTabs');
+            folderTabs.innerHTML = '';
+            
+            folders.forEach(folder => {
+                const tab = document.createElement('div');
+                tab.className = 'folder-tab';
+                
+                const shareSettings = folderSharing[folder.id];
+                const shareIcon = shareSettings?.type === 'private' ? '' :
+                    shareSettings?.type === 'view' ? '👥' : '✏️';
+                
+                tab.innerHTML = `
+                    ${shareIcon ? `<span class="folder-share-indicator">${shareIcon}</span>` : ''}
+                    ${folder.name} (${bookmarks[folder.id]?.length || 0})
+                `;
+                tab.onclick = () => showFolderBookmarks(folder.id);
+                folderTabs.appendChild(tab);
+            });
+        }
+    </script>
+</body>
+</html> 

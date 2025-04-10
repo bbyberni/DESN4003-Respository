@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate Resilience Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 0;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-size: 2rem;
+        }
+
+        .content p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            color: #444;
+            line-height: 1.8;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .top-header {
+            background-color: #f8f9fa;
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .top-header a {
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .top-header a:hover {
+            background-color: #e9ecef;
+        }
+
+        .login-btn {
+            background-color: #007bff;
+            color: white !important;
+        }
+
+        .login-btn:hover {
+            background-color: #0056b3 !important;
+        }
+
+        .account-btn {
+            background-color: #28a745;
+            color: white !important;
+        }
+
+        .account-btn:hover {
+            background-color: #218838 !important;
+        }
+
+        .search-button {
+            display: inline-block;
+            padding: 1.5rem 3rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .search-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <a href="index.html">Home</a>
+        <a href="search.html">Search Library</a>
+        <a href="published-folders.html">Published Folders</a>
+        <a href="login.html" id="authButton" class="login-btn">Log in</a>
+    </div>
+
+    <header>
+        <h1>Welcome to the Climate Resilience Library</h1>
+    </header>
+
+    <section class="hero">
+        <a href="search.html" class="search-button">Search our library now!</a>
+    </section>
+
+    <main class="content">
+        <h2>About Us</h2>
+        <p>With alarming rates of population growth in informal settlements vulnerable to climate change, it is imperative to identify risk, advocate change, and implement necessary mitigation and adaptation strategies.</p>
+        
+        <p>However, climate risk and adaptation research is severely disaggregated because of its global and interdisciplinary nature, which not only complicates data sourcing, but also limits reach of resources. This ultimately deters the timeliness and extensive collaboration required for implementing adaptation strategies, especially in low-income countries where grassroots, locally-led climate resilience is most needed.</p>
+        
+        <p>So, my project takes on a common data approach to this problem by designing a 'one-stop shop' for climate risk and adaptation research. Similar to an online library, it presents relevant resources to facilitate, streamline, and proliferate advocacy and implementation efforts, as well as foster collaboration between different disciplines and levels. By aggregating, organizing, and extracting data with web scraping and LLM tools, this website can help increase data accessibility and efficiency in the rising field of digital humanitarianism and climate action.</p>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 My Website. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Function to check if user is logged in
+        function checkLoginStatus() {
+            // Check if there's a logged in user (you can modify this based on your authentication method)
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const authButton = document.getElementById('authButton');
+
+            if (isLoggedIn) {
+                authButton.textContent = 'My Account';
+                authButton.href = 'account.html';
+                authButton.classList.remove('login-btn');
+                authButton.classList.add('account-btn');
+            } else {
+                authButton.textContent = 'Log in';
+                authButton.href = 'login.html';
+                authButton.classList.remove('account-btn');
+                authButton.classList.add('login-btn');
+            }
+        }
+
+        // Check login status when page loads
+        document.addEventListener('DOMContentLoaded', checkLoginStatus);
+
+        // Check login status when storage changes (in case user logs in/out in another tab)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'isLoggedIn') {
+                checkLoginStatus();
+            }
+        });
+    </script>
+</body>
+</html> 

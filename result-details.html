@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result Details - Climate Resilience Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+
+        .top-header {
+            background-color: #f8f9fa;
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .top-header a {
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .top-header a:hover {
+            background-color: #e9ecef;
+        }
+
+        .login-btn {
+            background-color: #007bff;
+            color: white !important;
+        }
+
+        .login-btn:hover {
+            background-color: #0056b3 !important;
+        }
+
+        .account-btn {
+            background-color: #28a745;
+            color: white !important;
+        }
+
+        .account-btn:hover {
+            background-color: #218838 !important;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .result-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .result-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .result-link:hover {
+            text-decoration: underline;
+        }
+
+        .result-snippet {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #333;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .ai-summary {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+        }
+
+        .key-findings {
+            list-style-type: none;
+        }
+
+        .key-findings li {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .key-findings li::before {
+            content: "•";
+            color: #007bff;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .contact-info {
+            background-color: #e9ecef;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-top: 2rem;
+        }
+
+        .contact-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-label {
+            font-weight: bold;
+            color: #555;
+            margin-right: 0.5rem;
+        }
+
+        .bookmark-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .bookmark-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .tag-query {
+            background-color: #ffe5cc;
+            color: #ff8c00;
+        }
+
+        .tag-country {
+            background-color: #e0f2e9;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <a href="index.html">Home</a>
+        <a href="search.html">Search Library</a>
+        <a href="published-folders.html">Published Folders</a>
+        <a href="login.html" id="authButton" class="login-btn">Log in</a>
+    </div>
+
+    <div class="container">
+        <div class="result-card">
+            <button class="bookmark-btn">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
+                </svg>
+                Bookmark
+            </button>
+
+            <h1 class="result-title">Climate Data Online (CDO)</h1>
+            <a href="https://www.ncdc.noaa.gov/cdo-web/" class="result-link" target="_blank">https://www.ncdc.noaa.gov/cdo-web/</a>
+            
+            <div class="tags">
+                <span class="tag tag-query">Climate Database</span>
+                <span class="tag tag-country">United States</span>
+            </div>
+
+            <p class="result-snippet">
+                NOAA's Climate Data Online (CDO) provides free access to NCDC's archive of historical weather and climate data in addition to station history information. These data include quality controlled daily, monthly, seasonal, and yearly measurements of temperature, precipitation, wind, and degree days as well as radar data and 30-year Climate Normals.
+            </p>
+
+            <h2 class="section-title">AI-Generated Summary</h2>
+            <div class="ai-summary">
+                <p>The Climate Data Online (CDO) platform is a comprehensive climate data repository maintained by NOAA's National Centers for Environmental Information. It serves as a centralized access point for historical weather observations, climate records, and station metadata across the United States and globally. The platform offers:</p>
+                <ul class="key-findings">
+                    <li>Quality-controlled climate datasets spanning multiple decades</li>
+                    <li>Interactive data access tools and visualization capabilities</li>
+                    <li>Multiple data formats for download (CSV, PDF, XML)</li>
+                    <li>Integration with other NOAA climate services and tools</li>
+                </ul>
+            </div>
+
+            <h2 class="section-title">Key Documents & Resources</h2>
+            <ul class="key-findings">
+                <li>Daily Weather Records (temperature, precipitation, wind)</li>
+                <li>Monthly Climate Reports and Summaries</li>
+                <li>30-year Climate Normals (1991-2020)</li>
+                <li>Station History Information and Metadata</li>
+                <li>Global Historical Climatology Network (GHCN) datasets</li>
+            </ul>
+
+            <div class="contact-info">
+                <h2 class="section-title">Contact Information</h2>
+                <p><span class="contact-label">Organization:</span> NOAA's National Centers for Environmental Information (NCEI)</p>
+                <p><span class="contact-label">Email:</span> ncei.info@noaa.gov</p>
+                <p><span class="contact-label">Phone:</span> 1-828-271-4800</p>
+                <p><span class="contact-label">Address:</span> 151 Patton Avenue, Asheville, NC 28801</p>
+                <p><span class="contact-label">Support Hours:</span> Monday - Friday, 8:00 AM - 6:00 PM Eastern</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to check if user is logged in
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const authButton = document.getElementById('authButton');
+
+            if (isLoggedIn) {
+                authButton.textContent = 'My Account';
+                authButton.href = 'account.html';
+                authButton.classList.remove('login-btn');
+                authButton.classList.add('account-btn');
+            } else {
+                authButton.textContent = 'Log in';
+                authButton.href = 'login.html';
+                authButton.classList.remove('account-btn');
+                authButton.classList.add('login-btn');
+            }
+        }
+
+        // Bookmark button functionality
+        document.querySelector('.bookmark-btn').addEventListener('click', function() {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                alert('Please log in to bookmark this resource');
+                return;
+            }
+            // Add bookmark functionality here
+            alert('Resource bookmarked successfully!');
+        });
+
+        // Check login status when page loads
+        document.addEventListener('DOMContentLoaded', checkLoginStatus);
+
+        // Check login status when storage changes
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'isLoggedIn') {
+                checkLoginStatus();
+            }
+        });
+    </script>
+</body>
+</html> 

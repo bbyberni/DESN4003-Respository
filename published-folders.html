@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Published Folders - Climate Resilience Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .top-header {
+            background-color: #f8f9fa;
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 0;
+        }
+
+        .top-header a {
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .top-header a:hover {
+            background-color: #e9ecef;
+        }
+
+        .login-btn {
+            background-color: #007bff;
+            color: white !important;
+        }
+
+        .login-btn:hover {
+            background-color: #0056b3 !important;
+        }
+
+        .account-btn {
+            background-color: #28a745;
+            color: white !important;
+        }
+
+        .account-btn:hover {
+            background-color: #218838 !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .search-button {
+            padding: 1rem 2rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+
+        .folders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .folder-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .folder-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .folder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .folder-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin: 0;
+        }
+
+        .folder-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .folder-preview {
+            color: #444;
+            margin-bottom: 1rem;
+        }
+
+        .folder-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .folder-tag {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .result-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .result-title {
+            color: #1a0dab;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            display: block;
+        }
+
+        .result-title:hover {
+            text-decoration: underline;
+        }
+
+        .result-link {
+            color: #006621;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .result-snippet {
+            color: #545454;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .result-tags {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+        }
+
+        .tag.country {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .tag.query {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <a href="index.html">Home</a>
+        <a href="search.html">Search Library</a>
+        <a href="published-folders.html">Published Folders</a>
+        <a href="login.html" id="authButton" class="login-btn">Log in</a>
+    </div>
+
+    <div class="container">
+        <div class="search-section">
+            <h1>Published Folders</h1>
+            <p>Browse and search through publicly shared bookmark collections</p>
+            <div class="search-bar">
+                <input type="text" 
+                       class="search-input" 
+                       placeholder="Search folders by name, description, or tags..."
+                       id="folderSearchInput"
+                       aria-label="Search folders">
+                <button class="search-button" onclick="searchFolders()">Search</button>
+            </div>
+        </div>
+
+        <div class="folders-grid" id="foldersGrid">
+            <!-- Folders will be populated here -->
+        </div>
+    </div>
+
+    <!-- Modal for displaying folder contents -->
+    <div id="folderModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalContent">
+                <!-- Results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data structure for published folders
+        const publishedFolders = [
+            {
+                id: 1,
+                title: "Climate Data Resources",
+                author: "John Doe",
+                date: "2024-03-15",
+                description: "A collection of essential climate data sources and tools",
+                bookmarkCount: 12,
+                tags: ["climate", "data", "research"],
+                isPublic: true,
+                query: "climate database"
+            },
+            {
+                id: 2,
+                title: "Vulnerability Assessment Tools",
+                author: "Jane Smith",
+                date: "2024-03-14",
+                description: "Comprehensive collection of vulnerability assessment resources",
+                bookmarkCount: 8,
+                tags: ["assessment", "vulnerability", "tools"],
+                isPublic: true,
+                query: "climate vulnerability assessment"
+            }
+        ];
+
+        // Search data from search.html
+        const searchData = [
+            // Climate database entries
+            {
+                query: "climate database",
+                rank: 1,
+                title: "Climate Data Online (CDO)",
+                link: "https://www.ncei.noaa.gov/cdo-web/",
+                snippet: "Climate Data Online (CDO) provides free access to NCDC's archive of global historical weather and climate data in addition to station history information.",
+                page: 1,
+                countries: ""
+            },
+            {
+                query: "climate database",
+                rank: 2,
+                title: "Search | Climate Data Online (CDO)",
+                link: "https://www.ncdc.noaa.gov/cdo-web/search",
+                snippet: "Start searching here to find past weather and climate data. Search within a date range and select specific type of search. All fields are required.",
+                page: 1,
+                countries: ""
+            },
+            {
+                query: "climate vulnerability assessment",
+                rank: 1,
+                title: "Climate Vulnerability Assessments - NOAA Fisheries",
+                link: "https://www.fisheries.noaa.gov/national/climate/climate-vulnerability-assessments",
+                snippet: "NOAA Fisheries assesses the vulnerability of fish stocks, protected species, habitats and fishing communities to changing climate conditions.",
+                page: 1,
+                countries: ""
+            }
+            // ... Add more entries as needed
+        ];
+
+        function searchFolders() {
+            const searchTerm = document.getElementById('folderSearchInput').value.toLowerCase();
+            const filteredFolders = publishedFolders.filter(folder => {
+                return folder.title.toLowerCase().includes(searchTerm) ||
+                       folder.description.toLowerCase().includes(searchTerm) ||
+                       folder.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+            });
+            displayFolders(filteredFolders);
+        }
+
+        function displayFolders(folders) {
+            const grid = document.getElementById('foldersGrid');
+            grid.innerHTML = '';
+
+            if (folders.length === 0) {
+                grid.innerHTML = '<div class="no-results">No folders found</div>';
+                return;
+            }
+
+            folders.forEach(folder => {
+                const folderElement = document.createElement('div');
+                folderElement.className = 'folder-card';
+                folderElement.onclick = () => showFolderContents(folder);
+                folderElement.innerHTML = `
+                    <div class="folder-header">
+                        <h2 class="folder-title">${folder.title}</h2>
+                    </div>
+                    <div class="folder-meta">
+                        Shared by ${folder.author} on ${new Date(folder.date).toLocaleDateString()}
+                        · ${folder.bookmarkCount} bookmarks
+                    </div>
+                    <p class="folder-preview">${folder.description}</p>
+                    <div class="folder-tags">
+                        ${folder.tags.map(tag => `<span class="folder-tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                grid.appendChild(folderElement);
+            });
+        }
+
+        function showFolderContents(folder) {
+            const modal = document.getElementById('folderModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+
+            modalTitle.textContent = folder.title;
+            
+            // Filter results based on folder's query and get 5 random ones
+            const relevantResults = searchData.filter(item => item.query === folder.query);
+            const randomResults = getRandomItems(relevantResults, 5);
+
+            modalContent.innerHTML = randomResults.map(result => `
+                <div class="result-item">
+                    <a href="${result.link}" class="result-title" target="_blank">${result.title}</a>
+                    <span class="result-link">${result.link}</span>
+                    <p class="result-snippet">${result.snippet}</p>
+                    <div class="result-tags">
+                        <span class="tag query">${result.query}</span>
+                        ${result.countries ? result.countries.split(',').map(country => 
+                            `<span class="tag country">${country.trim()}</span>`
+                        ).join('') : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('folderModal');
+            modal.style.display = 'none';
+        }
+
+        function getRandomItems(array, count) {
+            const shuffled = [...array].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        // Check login status when page loads
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const authButton = document.getElementById('authButton');
+            
+            if (isLoggedIn) {
+                authButton.textContent = 'My Account';
+                authButton.href = 'account.html';
+                authButton.classList.remove('login-btn');
+                authButton.classList.add('account-btn');
+            } else {
+                authButton.textContent = 'Log in';
+                authButton.href = 'login.html';
+                authButton.classList.remove('account-btn');
+                authButton.classList.add('login-btn');
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            displayFolders(publishedFolders);
+        });
+
+        // Add event listener for Enter key in search input
+        document.getElementById('folderSearchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchFolders();
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('folderModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html> 
