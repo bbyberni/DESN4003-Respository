@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Published Folders - Climate Resilience Library</title>
+    <link rel="stylesheet" href="chatbot.css">
     <style>
         * {
             margin: 0;
@@ -106,8 +107,9 @@
 
         .folders-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
+            margin-bottom: 2rem;
         }
 
         .folder-card {
@@ -117,16 +119,20 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: transform 0.3s;
             cursor: pointer;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .folder-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         .folder-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 1rem;
         }
 
@@ -134,24 +140,57 @@
             font-size: 1.2rem;
             color: #333;
             margin: 0;
+            line-height: 1.4;
         }
 
         .folder-meta {
             color: #666;
             font-size: 0.9rem;
             margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .folder-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .folder-meta i {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .folder-meta .views-count {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .folder-meta .views-count i {
+            color: #2e7d32;
         }
 
         .folder-preview {
             color: #444;
             margin-bottom: 1rem;
+            flex-grow: 1;
+            line-height: 1.5;
         }
 
         .folder-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
-            margin-top: 1rem;
+            margin-top: auto;
         }
 
         .folder-tag {
@@ -186,8 +225,8 @@
             padding: 2rem;
             border-radius: 8px;
             width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
+            max-width: 1000px;
+            max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -197,6 +236,20 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 0;
+        }
+
+        .modal-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
 
         .modal-close {
@@ -205,6 +258,12 @@
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.5rem;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #333;
         }
 
         .result-item {
@@ -213,6 +272,12 @@
             border-radius: 8px;
             margin-bottom: 1rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .result-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         .result-title {
@@ -262,6 +327,233 @@
             background-color: #fff3e0;
             color: #e65100;
         }
+
+        .search-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .sort-controls, .results-per-page {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .results-summary {
+            color: #666;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .sort-select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 0.9rem;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding: 1rem 0;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background-color: #f0f0f0;
+            border-color: #999;
+        }
+
+        .pagination button:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .pagination button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination-ellipsis {
+            padding: 0.5rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .folders-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .author-profile {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .author-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #495057;
+        }
+
+        .author-info {
+            flex-grow: 1;
+        }
+
+        .author-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .author-name:hover {
+            color: #007bff;
+        }
+
+        .author-title {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 0.25rem 0;
+        }
+
+        .author-org {
+            color: #495057;
+            font-size: 0.9rem;
+        }
+
+        .author-bio {
+            color: #495057;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 1rem 0;
+        }
+
+        .author-expertise {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .expertise-tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+        }
+
+        .author-folders {
+            margin: 1rem 0;
+        }
+
+        .author-folders h4 {
+            color: #495057;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .folder-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .folder-list li {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .folder-list li:hover {
+            color: #007bff;
+        }
+
+        .author-contact {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .contact-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .contact-link:hover {
+            text-decoration: underline;
+        }
+
+        .modal-scroll {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .modal-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .modal-scroll::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .modal-scroll::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
 <body>
@@ -284,10 +576,34 @@
                        aria-label="Search folders">
                 <button class="search-button" onclick="searchFolders()">Search</button>
             </div>
+            <div class="search-controls">
+                <div class="sort-controls">
+                    <label for="sortSelect">Sort by:</label>
+                    <select id="sortSelect" class="sort-select" onchange="updateResults()">
+                        <option value="title">Title (A-Z)</option>
+                        <option value="views">Most Views</option>
+                        <option value="date">Most Recent</option>
+                    </select>
+                </div>
+                <div class="results-summary" id="resultsSummary">
+                    <!-- Results count will be displayed here -->
+                </div>
+                <div class="results-per-page">
+                    <label for="resultsPerPage">Results per page:</label>
+                    <select id="resultsPerPage" class="sort-select" onchange="updateResults()">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         <div class="folders-grid" id="foldersGrid">
             <!-- Folders will be populated here -->
+        </div>
+        <div id="pagination" class="pagination">
+            <!-- Pagination controls will be added here -->
         </div>
     </div>
 
@@ -304,6 +620,7 @@
         </div>
     </div>
 
+    <script src="chatbot.js"></script>
     <script>
         // Sample data structure for published folders
         const publishedFolders = [
@@ -328,6 +645,226 @@
                 tags: ["assessment", "vulnerability", "tools"],
                 isPublic: true,
                 query: "climate vulnerability assessment"
+            },
+            {
+                id: 3,
+                title: "Global Climate Models",
+                author: "Dr. Sarah Chen",
+                date: "2024-03-13",
+                description: "Collection of global climate modeling resources and datasets",
+                bookmarkCount: 15,
+                tags: ["climate models", "global warming", "research"],
+                isPublic: true,
+                query: "climate risk model"
+            },
+            {
+                id: 4,
+                title: "Adaptation Strategies",
+                author: "Michael Brown",
+                date: "2024-03-12",
+                description: "Resources for climate adaptation planning and implementation",
+                bookmarkCount: 10,
+                tags: ["adaptation", "planning", "strategies"],
+                isPublic: true,
+                query: "climate adaptation framework"
+            },
+            {
+                id: 5,
+                title: "Climate Policy Database",
+                author: "Emma Wilson",
+                date: "2024-03-11",
+                description: "International climate policies and regulations collection",
+                bookmarkCount: 20,
+                tags: ["policy", "regulations", "international"],
+                isPublic: true,
+                query: "climate policy"
+            },
+            {
+                id: 6,
+                title: "Green Technology Hub",
+                author: "Alex Thompson",
+                date: "2024-03-10",
+                description: "Innovative climate technologies and solutions",
+                bookmarkCount: 18,
+                tags: ["technology", "innovation", "green tech"],
+                isPublic: true,
+                query: "climate technology"
+            },
+            {
+                id: 7,
+                title: "Climate Innovation Lab",
+                author: "Dr. James Lee",
+                date: "2024-03-09",
+                description: "Cutting-edge climate innovation research and projects",
+                bookmarkCount: 14,
+                tags: ["innovation", "research", "projects"],
+                isPublic: true,
+                query: "climate innovation"
+            },
+            {
+                id: 8,
+                title: "Resilience Building",
+                author: "Maria Garcia",
+                date: "2024-03-08",
+                description: "Resources for building climate resilience in communities",
+                bookmarkCount: 16,
+                tags: ["resilience", "communities", "building"],
+                isPublic: true,
+                query: "climate resilience"
+            },
+            {
+                id: 9,
+                title: "Mitigation Strategies",
+                author: "David Kim",
+                date: "2024-03-07",
+                description: "Climate change mitigation approaches and best practices",
+                bookmarkCount: 13,
+                tags: ["mitigation", "strategies", "best practices"],
+                isPublic: true,
+                query: "climate adaptation and mitigation strategies"
+            },
+            {
+                id: 10,
+                title: "Monitoring Systems",
+                author: "Lisa Anderson",
+                date: "2024-03-06",
+                description: "Climate monitoring tools and systems collection",
+                bookmarkCount: 11,
+                tags: ["monitoring", "systems", "tools"],
+                isPublic: true,
+                query: "climate strategy monitoring"
+            },
+            {
+                id: 11,
+                title: "Evaluation Frameworks",
+                author: "Robert Taylor",
+                date: "2024-03-05",
+                description: "Climate strategy evaluation methods and frameworks",
+                bookmarkCount: 9,
+                tags: ["evaluation", "frameworks", "methods"],
+                isPublic: true,
+                query: "climate strategy evaluation"
+            },
+            {
+                id: 12,
+                title: "Urban Climate Solutions",
+                author: "Sophie Martin",
+                date: "2024-03-04",
+                description: "Urban climate adaptation and mitigation solutions",
+                bookmarkCount: 17,
+                tags: ["urban", "cities", "solutions"],
+                isPublic: true,
+                query: "climate adaptation framework"
+            },
+            {
+                id: 13,
+                title: "Coastal Resilience",
+                author: "Chris Parker",
+                date: "2024-03-03",
+                description: "Resources for coastal climate resilience planning",
+                bookmarkCount: 15,
+                tags: ["coastal", "resilience", "planning"],
+                isPublic: true,
+                query: "climate resilience"
+            },
+            {
+                id: 14,
+                title: "Climate Finance",
+                author: "Dr. Rachel Wong",
+                date: "2024-03-02",
+                description: "Climate finance resources and funding opportunities",
+                bookmarkCount: 19,
+                tags: ["finance", "funding", "resources"],
+                isPublic: true,
+                query: "climate fund"
+            },
+            {
+                id: 15,
+                title: "Risk Assessment Tools",
+                author: "Thomas Wright",
+                date: "2024-03-01",
+                description: "Climate risk assessment methodologies and tools",
+                bookmarkCount: 12,
+                tags: ["risk", "assessment", "tools"],
+                isPublic: true,
+                query: "climate risk model"
+            },
+            {
+                id: 16,
+                title: "Policy Implementation",
+                author: "Nina Patel",
+                date: "2024-02-29",
+                description: "Climate policy implementation guides and resources",
+                bookmarkCount: 14,
+                tags: ["policy", "implementation", "guides"],
+                isPublic: true,
+                query: "climate policy"
+            },
+            {
+                id: 17,
+                title: "Technology Transfer",
+                author: "Mark Johnson",
+                date: "2024-02-28",
+                description: "Climate technology transfer and deployment resources",
+                bookmarkCount: 16,
+                tags: ["technology", "transfer", "deployment"],
+                isPublic: true,
+                query: "climate technology"
+            },
+            {
+                id: 18,
+                title: "Innovation Networks",
+                author: "Dr. Laura Chen",
+                date: "2024-02-27",
+                description: "Climate innovation networks and collaborations",
+                bookmarkCount: 13,
+                tags: ["innovation", "networks", "collaboration"],
+                isPublic: true,
+                query: "climate innovation"
+            },
+            {
+                id: 19,
+                title: "Community Adaptation",
+                author: "Kevin O'Brien",
+                date: "2024-02-26",
+                description: "Community-based climate adaptation resources",
+                bookmarkCount: 11,
+                tags: ["community", "adaptation", "resources"],
+                isPublic: true,
+                query: "climate adaptation framework"
+            },
+            {
+                id: 20,
+                title: "Strategy Evaluation",
+                author: "Dr. Anna Schmidt",
+                date: "2024-02-25",
+                description: "Climate strategy evaluation and assessment tools",
+                bookmarkCount: 15,
+                tags: ["strategy", "evaluation", "assessment"],
+                isPublic: true,
+                query: "climate strategy evaluation"
+            },
+            {
+                id: 21,
+                title: "Monitoring Best Practices",
+                author: "Peter Zhang",
+                date: "2024-02-24",
+                description: "Climate monitoring best practices and guidelines",
+                bookmarkCount: 10,
+                tags: ["monitoring", "best practices", "guidelines"],
+                isPublic: true,
+                query: "climate strategy monitoring"
+            },
+            {
+                id: 22,
+                title: "Resilience Planning",
+                author: "Dr. Maria Rodriguez",
+                date: "2024-02-23",
+                description: "Comprehensive climate resilience planning resources",
+                bookmarkCount: 18,
+                tags: ["resilience", "planning", "resources"],
+                isPublic: true,
+                query: "climate resilience"
             }
         ];
 
@@ -336,54 +873,522 @@
             // Climate database entries
             {
                 query: "climate database",
-                rank: 1,
-                title: "Climate Data Online (CDO)",
-                link: "https://www.ncei.noaa.gov/cdo-web/",
-                snippet: "Climate Data Online (CDO) provides free access to NCDC's archive of global historical weather and climate data in addition to station history information.",
+                rank: 16,
+                title: "Climate Data | European Environment Agency",
+                link: "https://www.eea.europa.eu/data-and-maps/data",
+                snippet: "The European Environment Agency provides climate data and indicators for European countries, including emissions, temperature, and precipitation data.",
                 page: 1,
-                countries: ""
+                countries: "European Union"
             },
             {
                 query: "climate database",
-                rank: 2,
-                title: "Search | Climate Data Online (CDO)",
-                link: "https://www.ncdc.noaa.gov/cdo-web/search",
-                snippet: "Start searching here to find past weather and climate data. Search within a date range and select specific type of search. All fields are required.",
+                rank: 17,
+                title: "Climate Data | Australian Bureau of Meteorology",
+                link: "http://www.bom.gov.au/climate/data/",
+                snippet: "The Bureau of Meteorology provides climate data services, including historical data, climate change projections, and seasonal forecasts.",
                 page: 1,
-                countries: ""
+                countries: "Australia"
             },
             {
-                query: "climate vulnerability assessment",
-                rank: 1,
-                title: "Climate Vulnerability Assessments - NOAA Fisheries",
-                link: "https://www.fisheries.noaa.gov/national/climate/climate-vulnerability-assessments",
-                snippet: "NOAA Fisheries assesses the vulnerability of fish stocks, protected species, habitats and fishing communities to changing climate conditions.",
+                query: "climate database",
+                rank: 18,
+                title: "Climate Data | Environment and Climate Change Canada",
+                link: "https://climate.weather.gc.ca/",
+                snippet: "Historical weather and climate data for Canadian locations, including temperature, precipitation, and climate normals.",
                 page: 1,
-                countries: ""
+                countries: "Canada"
+            },
+            {
+                query: "climate database",
+                rank: 19,
+                title: "Climate Data | Japan Meteorological Agency",
+                link: "https://www.data.jma.go.jp/gmd/risk/obsdl/index.php",
+                snippet: "The Japan Meteorological Agency provides climate data, including historical observations, climate change monitoring, and seasonal forecasts.",
+                page: 1,
+                countries: "Japan"
+            },
+            {
+                query: "climate database",
+                rank: 20,
+                title: "Climate Data | India Meteorological Department",
+                link: "https://mausam.imd.gov.in/",
+                snippet: "The India Meteorological Department provides climate data services, including historical data, climate change monitoring, and weather forecasts.",
+                page: 1,
+                countries: "India"
+            },
+            // Climate risk model entries
+            {
+                query: "climate risk model",
+                rank: 8,
+                title: "Climate Risk Model | India Meteorological Department",
+                link: "https://mausam.imd.gov.in/",
+                snippet: "IMD's climate risk model assesses climate risks in Indian regions.",
+                page: 1,
+                countries: "India"
+            },
+            {
+                query: "climate risk model",
+                rank: 9,
+                title: "Climate Risk Model | China Meteorological Administration",
+                link: "http://data.cma.cn/",
+                snippet: "CMA's climate risk model evaluates climate risks in Chinese regions.",
+                page: 1,
+                countries: "China"
+            },
+            {
+                query: "climate risk model",
+                rank: 10,
+                title: "Climate Risk Model | Brazilian National Institute of Meteorology",
+                link: "https://portal.inmet.gov.br/",
+                snippet: "INMET's climate risk model assesses climate risks in Brazilian regions.",
+                page: 1,
+                countries: "Brazil"
+            },
+            {
+                query: "climate risk model",
+                rank: 11,
+                title: "Climate Risk Model | South African Weather Service",
+                link: "https://www.weathersa.co.za/climate",
+                snippet: "SAWS's climate risk model evaluates climate risks in South African regions.",
+                page: 1,
+                countries: "South Africa"
+            },
+            {
+                query: "climate risk model",
+                rank: 12,
+                title: "Climate Risk Model | Russian Federal Service for Hydrometeorology",
+                link: "http://www.meteorf.ru/",
+                snippet: "RFSH's climate risk model assesses climate risks in Russian regions.",
+                page: 1,
+                countries: "Russia"
+            },
+            // Climate adaptation framework entries
+            {
+                query: "climate adaptation framework",
+                rank: 14,
+                title: "Climate Adaptation Framework | Singapore Meteorological Service",
+                link: "https://www.weather.gov.sg/",
+                snippet: "SMS's framework guides climate adaptation planning in Singapore.",
+                page: 1,
+                countries: "Singapore"
+            },
+            {
+                query: "climate adaptation framework",
+                rank: 15,
+                title: "Climate Adaptation Framework | New Zealand Meteorological Service",
+                link: "https://www.metservice.com/",
+                snippet: "NZMS's framework guides climate adaptation planning in New Zealand regions.",
+                page: 1,
+                countries: "New Zealand"
+            },
+            {
+                query: "climate adaptation framework",
+                rank: 16,
+                title: "Climate Adaptation Framework | Norwegian Meteorological Institute",
+                link: "https://www.met.no/",
+                snippet: "NMI's framework guides climate adaptation planning in Norwegian regions.",
+                page: 1,
+                countries: "Norway"
+            },
+            {
+                query: "climate adaptation framework",
+                rank: 17,
+                title: "Climate Adaptation Framework | Swedish Meteorological and Hydrological Institute",
+                link: "https://www.smhi.se/",
+                snippet: "SMHI's framework guides climate adaptation planning in Swedish regions.",
+                page: 1,
+                countries: "Sweden"
+            },
+            {
+                query: "climate adaptation framework",
+                rank: 18,
+                title: "Climate Adaptation Framework | Finnish Meteorological Institute",
+                link: "https://en.ilmatieteenlaitos.fi/",
+                snippet: "FMI's framework guides climate adaptation planning in Finnish regions.",
+                page: 1,
+                countries: "Finland"
+            },
+            // Climate policy entries
+            {
+                query: "climate policy",
+                rank: 6,
+                title: "OECD Statistics",
+                link: "https://stats.oecd.org/",
+                snippet: "OECD provides detailed statistics on economic, social, and environmental indicators for member countries.",
+                page: 1,
+                countries: "Global"
+            },
+            {
+                query: "climate policy",
+                rank: 7,
+                title: "Socioeconomic Data | United Nations Statistics Division",
+                link: "https://unstats.un.org/home/",
+                snippet: "The United Nations Statistics Division provides comprehensive socioeconomic data from countries around the world.",
+                page: 1,
+                countries: "Global"
+            },
+            {
+                query: "climate policy",
+                rank: 8,
+                title: "Socioeconomic Data | Eurostat",
+                link: "https://ec.europa.eu/eurostat",
+                snippet: "Eurostat provides detailed socioeconomic statistics for European Union member states.",
+                page: 1,
+                countries: "European Union"
+            },
+            {
+                query: "climate policy",
+                rank: 9,
+                title: "Socioeconomic Data | Statistics Canada",
+                link: "https://www.statcan.gc.ca/",
+                snippet: "Statistics Canada provides comprehensive socioeconomic data for Canadian provinces and territories.",
+                page: 1,
+                countries: "Canada"
+            },
+            {
+                query: "climate policy",
+                rank: 10,
+                title: "Socioeconomic Data | Australian Bureau of Statistics",
+                link: "https://www.abs.gov.au/",
+                snippet: "The Australian Bureau of Statistics provides detailed socioeconomic data for Australian states and territories.",
+                page: 1,
+                countries: "Australia"
+            },
+            // Climate technology entries
+            {
+                query: "climate technology",
+                rank: 23,
+                title: "Climate Technology Database | Australian Bureau of Meteorology",
+                link: "https://www.bom.gov.au/",
+                snippet: "BOM's database of climate technologies in Australian regions.",
+                page: 1,
+                countries: "Australia"
+            },
+            {
+                query: "climate technology",
+                rank: 24,
+                title: "Climate Technology Database | Canadian Meteorological Service",
+                link: "https://www.canada.ca/en/environment-climate-change.html",
+                snippet: "CMS's database of climate technologies in Canadian regions.",
+                page: 1,
+                countries: "Canada"
+            },
+            {
+                query: "climate technology",
+                rank: 25,
+                title: "Climate Technology Database | Japan Meteorological Agency",
+                link: "https://www.jma.go.jp/jma/indexe.html",
+                snippet: "JMA's database of climate technologies in Japanese regions.",
+                page: 1,
+                countries: "Japan"
+            },
+            {
+                query: "climate technology",
+                rank: 26,
+                title: "Climate Technology Database | China Meteorological Administration",
+                link: "http://www.cma.gov.cn/",
+                snippet: "CMA's database of climate technologies in Chinese regions.",
+                page: 1,
+                countries: "China"
+            },
+            {
+                query: "climate technology",
+                rank: 27,
+                title: "Climate Technology Database | India Meteorological Department",
+                link: "https://mausam.imd.gov.in/",
+                snippet: "IMD's database of climate technologies in Indian regions.",
+                page: 1,
+                countries: "India"
+            },
+            // Climate innovation entries
+            {
+                query: "climate innovation",
+                rank: 23,
+                title: "Climate Innovation Database | Australian Bureau of Meteorology",
+                link: "https://www.bom.gov.au/",
+                snippet: "BOM's database of climate innovations in Australian regions.",
+                page: 1,
+                countries: "Australia"
+            },
+            {
+                query: "climate innovation",
+                rank: 24,
+                title: "Climate Innovation Database | Canadian Meteorological Service",
+                link: "https://www.canada.ca/en/environment-climate-change.html",
+                snippet: "CMS's database of climate innovations in Canadian regions.",
+                page: 1,
+                countries: "Canada"
+            },
+            {
+                query: "climate innovation",
+                rank: 25,
+                title: "Climate Innovation Database | Japan Meteorological Agency",
+                link: "https://www.jma.go.jp/jma/indexe.html",
+                snippet: "JMA's database of climate innovations in Japanese regions.",
+                page: 1,
+                countries: "Japan"
+            },
+            {
+                query: "climate innovation",
+                rank: 26,
+                title: "Climate Innovation Database | China Meteorological Administration",
+                link: "http://www.cma.gov.cn/",
+                snippet: "CMA's database of climate innovations in Chinese regions.",
+                page: 1,
+                countries: "China"
+            },
+            {
+                query: "climate innovation",
+                rank: 27,
+                title: "Climate Innovation Database | India Meteorological Department",
+                link: "https://mausam.imd.gov.in/",
+                snippet: "IMD's database of climate innovations in Indian regions.",
+                page: 1,
+                countries: "India"
+            },
+            // Climate resilience entries
+            {
+                query: "climate resilience",
+                rank: 14,
+                title: "Climate Resilience Database | Singapore Meteorological Service",
+                link: "https://www.weather.gov.sg/",
+                snippet: "SMS's database of climate resilience initiatives in Singapore.",
+                page: 1,
+                countries: "Singapore"
+            },
+            {
+                query: "climate resilience",
+                rank: 15,
+                title: "Climate Resilience Database | New Zealand Meteorological Service",
+                link: "https://www.metservice.com/",
+                snippet: "NZMS's database of climate resilience initiatives in New Zealand regions.",
+                page: 1,
+                countries: "New Zealand"
+            },
+            {
+                query: "climate resilience",
+                rank: 16,
+                title: "Climate Resilience Database | Norwegian Meteorological Institute",
+                link: "https://www.met.no/",
+                snippet: "NMI's database of climate resilience initiatives in Norwegian regions.",
+                page: 1,
+                countries: "Norway"
+            },
+            {
+                query: "climate resilience",
+                rank: 17,
+                title: "Climate Resilience Database | Swedish Meteorological and Hydrological Institute",
+                link: "https://www.smhi.se/",
+                snippet: "SMHI's database of climate resilience initiatives in Swedish regions.",
+                page: 1,
+                countries: "Sweden"
+            },
+            {
+                query: "climate resilience",
+                rank: 18,
+                title: "Climate Resilience Database | Finnish Meteorological Institute",
+                link: "https://en.ilmatieteenlaitos.fi/",
+                snippet: "FMI's database of climate resilience initiatives in Finnish regions.",
+                page: 1,
+                countries: "Finland"
+            },
+            // Climate adaptation and mitigation strategies entries
+            {
+                query: "climate adaptation and mitigation strategies",
+                rank: 13,
+                title: "Climate Strategies Database | Korean Meteorological Administration",
+                link: "https://www.kma.go.kr/eng/",
+                snippet: "KMA's database of climate adaptation and mitigation strategies in Korean regions.",
+                page: 1,
+                countries: "South Korea"
+            },
+            {
+                query: "climate adaptation and mitigation strategies",
+                rank: 14,
+                title: "Climate Strategies Database | Singapore Meteorological Service",
+                link: "https://www.weather.gov.sg/",
+                snippet: "SMS's database of climate adaptation and mitigation strategies in Singapore.",
+                page: 1,
+                countries: "Singapore"
+            },
+            {
+                query: "climate adaptation and mitigation strategies",
+                rank: 15,
+                title: "Climate Strategies Database | New Zealand Meteorological Service",
+                link: "https://www.metservice.com/",
+                snippet: "NZMS's database of climate adaptation and mitigation strategies in New Zealand regions.",
+                page: 1,
+                countries: "New Zealand"
+            },
+            {
+                query: "climate adaptation and mitigation strategies",
+                rank: 16,
+                title: "Climate Strategies Database | Norwegian Meteorological Institute",
+                link: "https://www.met.no/",
+                snippet: "NMI's database of climate adaptation and mitigation strategies in Norwegian regions.",
+                page: 1,
+                countries: "Norway"
+            },
+            {
+                query: "climate adaptation and mitigation strategies",
+                rank: 17,
+                title: "Climate Strategies Database | Swedish Meteorological and Hydrological Institute",
+                link: "https://www.smhi.se/",
+                snippet: "SMHI's database of climate adaptation and mitigation strategies in Swedish regions.",
+                page: 1,
+                countries: "Sweden"
+            },
+            // Climate strategy monitoring entries
+            {
+                query: "climate strategy monitoring",
+                rank: 27,
+                title: "Climate Monitoring Database | India Meteorological Department",
+                link: "https://mausam.imd.gov.in/",
+                snippet: "IMD's database of climate strategy monitoring initiatives in Indian regions.",
+                page: 1,
+                countries: "India"
+            },
+            {
+                query: "climate strategy monitoring",
+                rank: 28,
+                title: "Climate Monitoring Database | Brazilian National Institute of Meteorology",
+                link: "https://portal.inmet.gov.br/",
+                snippet: "INMET's database of climate strategy monitoring initiatives in Brazilian regions.",
+                page: 1,
+                countries: "Brazil"
+            },
+            {
+                query: "climate strategy monitoring",
+                rank: 29,
+                title: "Climate Monitoring Database | South African Weather Service",
+                link: "https://www.weathersa.co.za/",
+                snippet: "SAWS's database of climate strategy monitoring initiatives in South African regions.",
+                page: 1,
+                countries: "South Africa"
+            },
+            {
+                query: "climate strategy monitoring",
+                rank: 30,
+                title: "Climate Monitoring Database | Mexican National Meteorological Service",
+                link: "https://smn.conagua.gob.mx/",
+                snippet: "SMN's database of climate strategy monitoring initiatives in Mexican regions.",
+                page: 1,
+                countries: "Mexico"
+            },
+            {
+                query: "climate strategy monitoring",
+                rank: 31,
+                title: "Climate Monitoring Database | Russian Federal Service for Hydrometeorology",
+                link: "http://www.meteorf.ru/",
+                snippet: "Roshydromet's database of climate strategy monitoring initiatives in Russian regions.",
+                page: 1,
+                countries: "Russia"
+            },
+            // Climate strategy evaluation entries
+            {
+                query: "climate strategy evaluation",
+                rank: 27,
+                title: "Climate Evaluation Database | India Meteorological Department",
+                link: "https://mausam.imd.gov.in/",
+                snippet: "IMD's database of climate strategy evaluation initiatives in Indian regions.",
+                page: 1,
+                countries: "India"
+            },
+            {
+                query: "climate strategy evaluation",
+                rank: 28,
+                title: "Climate Evaluation Database | Brazilian National Institute of Meteorology",
+                link: "https://portal.inmet.gov.br/",
+                snippet: "INMET's database of climate strategy evaluation initiatives in Brazilian regions.",
+                page: 1,
+                countries: "Brazil"
+            },
+            {
+                query: "climate strategy evaluation",
+                rank: 29,
+                title: "Climate Evaluation Database | South African Weather Service",
+                link: "https://www.weathersa.co.za/",
+                snippet: "SAWS's database of climate strategy evaluation initiatives in South African regions.",
+                page: 1,
+                countries: "South Africa"
+            },
+            {
+                query: "climate strategy evaluation",
+                rank: 30,
+                title: "Climate Evaluation Database | Mexican National Meteorological Service",
+                link: "https://smn.conagua.gob.mx/",
+                snippet: "SMN's database of climate strategy evaluation initiatives in Mexican regions.",
+                page: 1,
+                countries: "Mexico"
+            },
+            {
+                query: "climate strategy evaluation",
+                rank: 31,
+                title: "Climate Evaluation Database | Russian Federal Service for Hydrometeorology",
+                link: "http://www.meteorf.ru/",
+                snippet: "Roshydromet's database of climate strategy evaluation initiatives in Russian regions.",
+                page: 1,
+                countries: "Russia"
             }
-            // ... Add more entries as needed
         ];
+
+        let filteredFolders = [];
+        let sortedFolders = [];
+        let currentPage = 1;
 
         function searchFolders() {
             const searchTerm = document.getElementById('folderSearchInput').value.toLowerCase();
-            const filteredFolders = publishedFolders.filter(folder => {
+            filteredFolders = publishedFolders.filter(folder => {
                 return folder.title.toLowerCase().includes(searchTerm) ||
                        folder.description.toLowerCase().includes(searchTerm) ||
                        folder.tags.some(tag => tag.toLowerCase().includes(searchTerm));
             });
-            displayFolders(filteredFolders);
+
+            sortResults();
+            currentPage = 1;
+            displayFolders();
         }
 
-        function displayFolders(folders) {
+        function sortResults() {
+            const sortBy = document.getElementById('sortSelect').value;
+            
+            sortedFolders = [...filteredFolders];
+            
+            switch(sortBy) {
+                case 'title':
+                    sortedFolders.sort((a, b) => a.title.localeCompare(b.title));
+                    break;
+                case 'views':
+                    sortedFolders.sort((a, b) => b.views - a.views);
+                    break;
+                case 'date':
+                    sortedFolders.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    break;
+            }
+        }
+
+        function displayFolders() {
+            const resultsPerPage = parseInt(document.getElementById('resultsPerPage').value);
+            const startIndex = (currentPage - 1) * resultsPerPage;
+            const endIndex = Math.min(startIndex + resultsPerPage, sortedFolders.length);
+            const paginatedFolders = sortedFolders.slice(startIndex, endIndex);
+            
             const grid = document.getElementById('foldersGrid');
             grid.innerHTML = '';
 
-            if (folders.length === 0) {
+            if (sortedFolders.length === 0) {
                 grid.innerHTML = '<div class="no-results">No folders found</div>';
+                document.getElementById('pagination').innerHTML = '';
+                document.getElementById('resultsSummary').innerHTML = '';
                 return;
             }
 
-            folders.forEach(folder => {
+            // Display results count
+            const totalResults = sortedFolders.length;
+            const resultsCountHtml = `Showing ${startIndex + 1}-${endIndex} of ${totalResults} results`;
+            document.getElementById('resultsSummary').innerHTML = resultsCountHtml;
+
+            paginatedFolders.forEach(folder => {
                 const folderElement = document.createElement('div');
                 folderElement.className = 'folder-card';
                 folderElement.onclick = () => showFolderContents(folder);
@@ -392,8 +1397,10 @@
                         <h2 class="folder-title">${folder.title}</h2>
                     </div>
                     <div class="folder-meta">
-                        Shared by ${folder.author} on ${new Date(folder.date).toLocaleDateString()}
-                        · ${folder.bookmarkCount} bookmarks
+                        <span><i class="far fa-user"></i> ${folder.author}</span>
+                        <span><i class="far fa-calendar"></i> ${new Date(folder.date).toLocaleDateString()}</span>
+                        <span><i class="far fa-bookmark"></i> ${folder.bookmarkCount} bookmarks</span>
+                        <span class="views-count"><i class="far fa-eye"></i> ${folder.views.toLocaleString()} views</span>
                     </div>
                     <p class="folder-preview">${folder.description}</p>
                     <div class="folder-tags">
@@ -402,34 +1409,468 @@
                 `;
                 grid.appendChild(folderElement);
             });
+
+            updatePagination();
         }
+
+        function updateResults() {
+            sortResults();
+            displayFolders();
+        }
+
+        // Sample author profiles data
+        const authorProfiles = {
+            "John Doe": {
+                name: "John Doe",
+                title: "Climate Data Scientist",
+                organization: "Global Climate Research Institute",
+                bio: "Dr. John Doe is a climate data scientist with over 15 years of experience in climate data analysis and modeling. He specializes in developing climate databases and tools for researchers worldwide.",
+                expertise: ["Climate Data Analysis", "Data Modeling", "Research Methods"],
+                otherFolders: ["Climate Data Resources", "Global Climate Models", "Climate Monitoring Systems"],
+                contact: {
+                    email: "john.doe@climate-research.org",
+                    twitter: "@johndoe_climate",
+                    linkedin: "linkedin.com/in/johndoe"
+                }
+            },
+            "Jane Smith": {
+                name: "Jane Smith",
+                title: "Environmental Risk Analyst",
+                organization: "Environmental Risk Assessment Center",
+                bio: "Jane Smith is an environmental risk analyst focusing on climate vulnerability assessment and adaptation strategies. She has led numerous projects in developing countries.",
+                expertise: ["Risk Assessment", "Vulnerability Analysis", "Adaptation Planning"],
+                otherFolders: ["Vulnerability Assessment Tools", "Risk Assessment Tools", "Climate Risk Models"],
+                contact: {
+                    email: "jane.smith@risk-assessment.org",
+                    twitter: "@janesmith_env",
+                    linkedin: "linkedin.com/in/janesmith"
+                }
+            },
+            "Dr. Sarah Chen": {
+                name: "Dr. Sarah Chen",
+                title: "Climate Modeler",
+                organization: "International Climate Modeling Institute",
+                bio: "Dr. Chen is a leading expert in global climate modeling with a focus on regional climate projections. Her work has been published in numerous scientific journals.",
+                expertise: ["Climate Modeling", "Data Analysis", "Scientific Research"],
+                otherFolders: ["Global Climate Models", "Climate Data Resources", "Climate Risk Models"],
+                contact: {
+                    email: "sarah.chen@climate-modeling.org",
+                    twitter: "@sarahchen_climate",
+                    linkedin: "linkedin.com/in/sarahchen"
+                }
+            },
+            "Michael Brown": {
+                name: "Michael Brown",
+                title: "Climate Adaptation Specialist",
+                organization: "Climate Adaptation Solutions",
+                bio: "Michael Brown has extensive experience in developing climate adaptation strategies for urban areas. He has worked with multiple cities worldwide on climate resilience planning.",
+                expertise: ["Urban Adaptation", "Climate Planning", "Policy Development"],
+                otherFolders: ["Adaptation Strategies", "Urban Climate Solutions", "Climate Adaptation Framework"],
+                contact: {
+                    email: "michael.brown@adaptation-solutions.org",
+                    twitter: "@michaelbrown_climate",
+                    linkedin: "linkedin.com/in/michaelbrown"
+                }
+            },
+            "Emma Wilson": {
+                name: "Emma Wilson",
+                title: "Climate Policy Analyst",
+                organization: "International Climate Policy Institute",
+                bio: "Emma Wilson specializes in climate policy analysis and development. She has contributed to numerous international climate policy frameworks.",
+                expertise: ["Policy Analysis", "International Relations", "Climate Governance"],
+                otherFolders: ["Climate Policy Database", "Policy Implementation", "Climate Policy"],
+                contact: {
+                    email: "emma.wilson@climate-policy.org",
+                    twitter: "@emmawilson_policy",
+                    linkedin: "linkedin.com/in/emmawilson"
+                }
+            },
+            "Alex Thompson": {
+                name: "Alex Thompson",
+                title: "Green Technology Specialist",
+                organization: "Climate Technology Innovation Center",
+                bio: "Alex Thompson is an expert in climate technology and sustainable solutions. He focuses on developing and implementing innovative green technologies.",
+                expertise: ["Green Technology", "Innovation", "Sustainable Solutions"],
+                otherFolders: ["Green Technology Hub", "Technology Transfer", "Climate Technology"],
+                contact: {
+                    email: "alex.thompson@climate-tech.org",
+                    twitter: "@alexthompson_tech",
+                    linkedin: "linkedin.com/in/alexthompson"
+                }
+            },
+            "Dr. James Lee": {
+                name: "Dr. James Lee",
+                title: "Climate Innovation Researcher",
+                organization: "Climate Innovation Research Institute",
+                bio: "Dr. Lee leads research in climate innovation and sustainable development. His work focuses on breakthrough technologies for climate mitigation.",
+                expertise: ["Climate Innovation", "Research", "Technology Development"],
+                otherFolders: ["Climate Innovation Lab", "Innovation Networks", "Climate Innovation"],
+                contact: {
+                    email: "james.lee@climate-innovation.org",
+                    twitter: "@jameslee_innovation",
+                    linkedin: "linkedin.com/in/jameslee"
+                }
+            },
+            "Maria Garcia": {
+                name: "Maria Garcia",
+                title: "Climate Resilience Expert",
+                organization: "Global Resilience Institute",
+                bio: "Maria Garcia specializes in building climate resilience in communities. She has extensive experience in developing resilience strategies for vulnerable regions.",
+                expertise: ["Community Resilience", "Climate Adaptation", "Risk Management"],
+                otherFolders: ["Resilience Building", "Community Adaptation", "Climate Resilience"],
+                contact: {
+                    email: "maria.garcia@resilience.org",
+                    twitter: "@mariagarcia_res",
+                    linkedin: "linkedin.com/in/mariagarcia"
+                }
+            },
+            "David Kim": {
+                name: "David Kim",
+                title: "Climate Strategy Specialist",
+                organization: "International Climate Strategy Center",
+                bio: "David Kim is an expert in climate change mitigation strategies and policy implementation. He has worked with multiple international organizations.",
+                expertise: ["Climate Strategy", "Policy Implementation", "Mitigation Planning"],
+                otherFolders: ["Mitigation Strategies", "Strategy Evaluation", "Climate Strategy Evaluation"],
+                contact: {
+                    email: "david.kim@climate-strategy.org",
+                    twitter: "@davidkim_strategy",
+                    linkedin: "linkedin.com/in/davidkim"
+                }
+            },
+            "Lisa Anderson": {
+                name: "Lisa Anderson",
+                title: "Climate Monitoring Expert",
+                organization: "Climate Monitoring Institute",
+                bio: "Lisa Anderson specializes in climate monitoring systems and data analysis. She has developed numerous monitoring frameworks for various regions.",
+                expertise: ["Climate Monitoring", "Data Analysis", "System Development"],
+                otherFolders: ["Monitoring Systems", "Monitoring Best Practices", "Climate Strategy Monitoring"],
+                contact: {
+                    email: "lisa.anderson@climate-monitoring.org",
+                    twitter: "@lisaanderson_mon",
+                    linkedin: "linkedin.com/in/lisaanderson"
+                }
+            },
+            "Robert Taylor": {
+                name: "Robert Taylor",
+                title: "Climate Evaluation Specialist",
+                organization: "Climate Evaluation Center",
+                bio: "Robert Taylor is an expert in climate strategy evaluation and assessment. He has developed frameworks for evaluating climate initiatives worldwide.",
+                expertise: ["Strategy Evaluation", "Assessment Methods", "Climate Analysis"],
+                otherFolders: ["Evaluation Frameworks", "Strategy Evaluation", "Climate Strategy Evaluation"],
+                contact: {
+                    email: "robert.taylor@climate-evaluation.org",
+                    twitter: "@roberttaylor_eval",
+                    linkedin: "linkedin.com/in/roberttaylor"
+                }
+            },
+            "Sophie Martin": {
+                name: "Sophie Martin",
+                title: "Urban Climate Specialist",
+                organization: "Urban Climate Solutions Institute",
+                bio: "Sophie Martin focuses on urban climate solutions and city-level adaptation strategies. She has worked with numerous cities on climate action plans.",
+                expertise: ["Urban Planning", "Climate Solutions", "City Adaptation"],
+                otherFolders: ["Urban Climate Solutions", "Climate Adaptation Framework", "Adaptation Strategies"],
+                contact: {
+                    email: "sophie.martin@urban-climate.org",
+                    twitter: "@sophiemartin_urban",
+                    linkedin: "linkedin.com/in/sophiemartin"
+                }
+            },
+            "Chris Parker": {
+                name: "Chris Parker",
+                title: "Coastal Resilience Expert",
+                organization: "Coastal Climate Institute",
+                bio: "Chris Parker specializes in coastal climate resilience and adaptation planning. He has extensive experience in coastal zone management.",
+                expertise: ["Coastal Management", "Resilience Planning", "Climate Adaptation"],
+                otherFolders: ["Coastal Resilience", "Climate Resilience", "Resilience Building"],
+                contact: {
+                    email: "chris.parker@coastal-climate.org",
+                    twitter: "@chrisparker_coast",
+                    linkedin: "linkedin.com/in/chrisparker"
+                }
+            },
+            "Dr. Rachel Wong": {
+                name: "Dr. Rachel Wong",
+                title: "Climate Finance Expert",
+                organization: "Climate Finance Institute",
+                bio: "Dr. Wong is an expert in climate finance and funding mechanisms. She has developed numerous climate finance frameworks for various regions.",
+                expertise: ["Climate Finance", "Funding Mechanisms", "Financial Planning"],
+                otherFolders: ["Climate Finance", "Climate Policy", "Policy Implementation"],
+                contact: {
+                    email: "rachel.wong@climate-finance.org",
+                    twitter: "@rachelwong_finance",
+                    linkedin: "linkedin.com/in/rachelwong"
+                }
+            },
+            "Thomas Wright": {
+                name: "Thomas Wright",
+                title: "Risk Assessment Specialist",
+                organization: "Climate Risk Assessment Center",
+                bio: "Thomas Wright specializes in climate risk assessment methodologies and tools. He has developed frameworks for risk evaluation in various sectors.",
+                expertise: ["Risk Assessment", "Climate Analysis", "Methodology Development"],
+                otherFolders: ["Risk Assessment Tools", "Climate Risk Model", "Climate Vulnerability Assessment"],
+                contact: {
+                    email: "thomas.wright@climate-risk.org",
+                    twitter: "@thomaswright_risk",
+                    linkedin: "linkedin.com/in/thomaswright"
+                }
+            },
+            "Nina Patel": {
+                name: "Nina Patel",
+                title: "Policy Implementation Expert",
+                organization: "Climate Policy Implementation Institute",
+                bio: "Nina Patel focuses on climate policy implementation and governance. She has extensive experience in policy development and execution.",
+                expertise: ["Policy Implementation", "Governance", "Climate Policy"],
+                otherFolders: ["Policy Implementation", "Climate Policy", "Climate Policy Database"],
+                contact: {
+                    email: "nina.patel@policy-implementation.org",
+                    twitter: "@ninapatel_policy",
+                    linkedin: "linkedin.com/in/ninapatel"
+                }
+            },
+            "Mark Johnson": {
+                name: "Mark Johnson",
+                title: "Technology Transfer Specialist",
+                organization: "Climate Technology Transfer Center",
+                bio: "Mark Johnson specializes in climate technology transfer and deployment. He has facilitated numerous technology transfer initiatives worldwide.",
+                expertise: ["Technology Transfer", "Deployment", "Climate Technology"],
+                otherFolders: ["Technology Transfer", "Climate Technology", "Green Technology Hub"],
+                contact: {
+                    email: "mark.johnson@tech-transfer.org",
+                    twitter: "@markjohnson_tech",
+                    linkedin: "linkedin.com/in/markjohnson"
+                }
+            },
+            "Dr. Laura Chen": {
+                name: "Dr. Laura Chen",
+                title: "Innovation Network Specialist",
+                organization: "Climate Innovation Network Institute",
+                bio: "Dr. Chen focuses on climate innovation networks and collaborations. She has established numerous innovation networks across different regions.",
+                expertise: ["Innovation Networks", "Collaboration", "Climate Innovation"],
+                otherFolders: ["Innovation Networks", "Climate Innovation", "Climate Innovation Lab"],
+                contact: {
+                    email: "laura.chen@innovation-network.org",
+                    twitter: "@laurachen_innovation",
+                    linkedin: "linkedin.com/in/laurachen"
+                }
+            },
+            "Kevin O'Brien": {
+                name: "Kevin O'Brien",
+                title: "Community Adaptation Expert",
+                organization: "Community Climate Adaptation Center",
+                bio: "Kevin O'Brien specializes in community-based climate adaptation. He has worked with numerous communities on adaptation planning.",
+                expertise: ["Community Adaptation", "Climate Planning", "Local Development"],
+                otherFolders: ["Community Adaptation", "Climate Adaptation Framework", "Adaptation Strategies"],
+                contact: {
+                    email: "kevin.obrien@community-adaptation.org",
+                    twitter: "@kevinobrien_adapt",
+                    linkedin: "linkedin.com/in/kevinobrien"
+                }
+            },
+            "Dr. Anna Schmidt": {
+                name: "Dr. Anna Schmidt",
+                title: "Strategy Evaluation Expert",
+                organization: "Climate Strategy Evaluation Institute",
+                bio: "Dr. Schmidt is an expert in climate strategy evaluation and assessment. She has developed numerous evaluation frameworks for climate initiatives.",
+                expertise: ["Strategy Evaluation", "Assessment", "Climate Analysis"],
+                otherFolders: ["Strategy Evaluation", "Climate Strategy Evaluation", "Evaluation Frameworks"],
+                contact: {
+                    email: "anna.schmidt@strategy-evaluation.org",
+                    twitter: "@annaschmidt_eval",
+                    linkedin: "linkedin.com/in/annaschmidt"
+                }
+            },
+            "Peter Zhang": {
+                name: "Peter Zhang",
+                title: "Monitoring Systems Expert",
+                organization: "Climate Monitoring Systems Institute",
+                bio: "Peter Zhang specializes in climate monitoring systems and best practices. He has developed numerous monitoring frameworks for various regions.",
+                expertise: ["Monitoring Systems", "Best Practices", "Climate Analysis"],
+                otherFolders: ["Monitoring Best Practices", "Monitoring Systems", "Climate Strategy Monitoring"],
+                contact: {
+                    email: "peter.zhang@monitoring-systems.org",
+                    twitter: "@peterzhang_mon",
+                    linkedin: "linkedin.com/in/peterzhang"
+                }
+            },
+            "Dr. Maria Rodriguez": {
+                name: "Dr. Maria Rodriguez",
+                title: "Resilience Planning Expert",
+                organization: "Climate Resilience Planning Institute",
+                bio: "Dr. Rodriguez is an expert in climate resilience planning and implementation. She has developed numerous resilience frameworks for various regions.",
+                expertise: ["Resilience Planning", "Climate Adaptation", "Strategy Development"],
+                otherFolders: ["Resilience Planning", "Climate Resilience", "Resilience Building"],
+                contact: {
+                    email: "maria.rodriguez@resilience-planning.org",
+                    twitter: "@mariarodriguez_res",
+                    linkedin: "linkedin.com/in/mariarodriguez"
+                }
+            }
+        };
 
         function showFolderContents(folder) {
             const modal = document.getElementById('folderModal');
             const modalTitle = document.getElementById('modalTitle');
             const modalContent = document.getElementById('modalContent');
+            const authorProfile = authorProfiles[folder.author] || {
+                name: folder.author,
+                title: "Climate Researcher",
+                organization: "Climate Research Organization",
+                bio: "Climate researcher with expertise in various aspects of climate science and policy.",
+                expertise: ["Climate Research", "Data Analysis"],
+                otherFolders: [],
+                contact: {
+                    email: "contact@climate-research.org",
+                    twitter: "@climate_researcher",
+                    linkedin: "linkedin.com/in/climate-researcher"
+                }
+            };
 
-            modalTitle.textContent = folder.title;
-            
-            // Filter results based on folder's query and get 5 random ones
-            const relevantResults = searchData.filter(item => item.query === folder.query);
-            const randomResults = getRandomItems(relevantResults, 5);
-
-            modalContent.innerHTML = randomResults.map(result => `
-                <div class="result-item">
-                    <a href="${result.link}" class="result-title" target="_blank">${result.title}</a>
-                    <span class="result-link">${result.link}</span>
-                    <p class="result-snippet">${result.snippet}</p>
-                    <div class="result-tags">
-                        <span class="tag query">${result.query}</span>
-                        ${result.countries ? result.countries.split(',').map(country => 
-                            `<span class="tag country">${country.trim()}</span>`
-                        ).join('') : ''}
-                    </div>
+            modalTitle.innerHTML = `
+                <h2 class="modal-title">${folder.title}</h2>
+                <div class="modal-meta">
+                    <span><i class="far fa-calendar"></i> ${new Date(folder.date).toLocaleDateString()}</span>
+                    <span><i class="far fa-bookmark"></i> ${folder.bookmarkCount} bookmarks</span>
+                    <span class="views-count"><i class="far fa-eye"></i> ${folder.views.toLocaleString()} views</span>
                 </div>
-            `).join('');
+            `;
+            
+            // Filter results based on folder's query and get 15 random ones
+            const relevantResults = searchData.filter(item => item.query === folder.query);
+            const randomResults = getRandomItems(relevantResults, 15);
+
+            modalContent.innerHTML = `
+                <div class="modal-scroll">
+                    <div class="author-profile">
+                        <div class="author-header">
+                            <div class="author-avatar">
+                                ${authorProfile.name.charAt(0)}
+                            </div>
+                            <div class="author-info">
+                                <h3 class="author-name" onclick="showAuthorProfile('${authorProfile.name}')">${authorProfile.name}</h3>
+                                <div class="author-title">${authorProfile.title}</div>
+                                <div class="author-org">${authorProfile.organization}</div>
+                            </div>
+                        </div>
+                        <p class="author-bio">${authorProfile.bio}</p>
+                        <div class="author-expertise">
+                            ${authorProfile.expertise.map(exp => `<span class="expertise-tag">${exp}</span>`).join('')}
+                        </div>
+                        <div class="author-folders">
+                            <h4>Other Published Folders</h4>
+                            <ul class="folder-list">
+                                ${authorProfile.otherFolders.map(f => `<li onclick="showFolderByName('${f}')">${f}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="author-contact">
+                            <a href="mailto:${authorProfile.contact.email}" class="contact-link">
+                                <i class="far fa-envelope"></i> Email
+                            </a>
+                            <a href="https://twitter.com/${authorProfile.contact.twitter}" target="_blank" class="contact-link">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </a>
+                            <a href="https://${authorProfile.contact.linkedin}" target="_blank" class="contact-link">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </a>
+                        </div>
+                    </div>
+                    <div class="folder-description">
+                        <p>${folder.description}</p>
+                    </div>
+                    <div class="folder-tags" style="margin-bottom: 1.5rem;">
+                        ${folder.tags.map(tag => `<span class="folder-tag">${tag}</span>`).join('')}
+                    </div>
+                    <h3 style="margin-bottom: 1rem;">Bookmarked Results (${randomResults.length})</h3>
+                    ${randomResults.map(result => `
+                        <div class="result-item">
+                            <a href="${result.link}" class="result-title" target="_blank">${result.title}</a>
+                            <span class="result-link">${result.link}</span>
+                            <p class="result-snippet">${result.snippet}</p>
+                            <div class="result-tags">
+                                <span class="tag query">${result.query}</span>
+                                ${result.countries ? result.countries.split(',').map(country => 
+                                    `<span class="tag country">${country.trim()}</span>`
+                                ).join('') : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
 
             modal.style.display = 'flex';
+        }
+
+        function showFolderByName(folderName) {
+            const folder = publishedFolders.find(f => f.title === folderName);
+            if (folder) {
+                showFolderContents(folder);
+            }
+        }
+
+        function showAuthorProfile(authorName) {
+            const authorFolders = publishedFolders.filter(f => f.author === authorName);
+            if (authorFolders.length > 0) {
+                const modal = document.getElementById('folderModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalContent = document.getElementById('modalContent');
+                const authorProfile = authorProfiles[authorName] || {
+                    name: authorName,
+                    title: "Climate Researcher",
+                    organization: "Climate Research Organization",
+                    bio: "Climate researcher with expertise in various aspects of climate science and policy.",
+                    expertise: ["Climate Research", "Data Analysis"],
+                    otherFolders: [],
+                    contact: {
+                        email: "contact@climate-research.org",
+                        twitter: "@climate_researcher",
+                        linkedin: "linkedin.com/in/climate-researcher"
+                    }
+                };
+
+                modalTitle.innerHTML = `
+                    <h2 class="modal-title">${authorName}'s Profile</h2>
+                `;
+
+                modalContent.innerHTML = `
+                    <div class="modal-scroll">
+                        <div class="author-profile">
+                            <div class="author-header">
+                                <div class="author-avatar">
+                                    ${authorProfile.name.charAt(0)}
+                                </div>
+                                <div class="author-info">
+                                    <h3 class="author-name">${authorProfile.name}</h3>
+                                    <div class="author-title">${authorProfile.title}</div>
+                                    <div class="author-org">${authorProfile.organization}</div>
+                                </div>
+                            </div>
+                            <p class="author-bio">${authorProfile.bio}</p>
+                            <div class="author-expertise">
+                                ${authorProfile.expertise.map(exp => `<span class="expertise-tag">${exp}</span>`).join('')}
+                            </div>
+                            <div class="author-folders">
+                                <h4>Published Folders</h4>
+                                <ul class="folder-list">
+                                    ${authorFolders.map(f => `<li onclick="showFolderByName('${f.title}')">${f.title}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="author-contact">
+                                <a href="mailto:${authorProfile.contact.email}" class="contact-link">
+                                    <i class="far fa-envelope"></i> Email
+                                </a>
+                                <a href="https://twitter.com/${authorProfile.contact.twitter}" target="_blank" class="contact-link">
+                                    <i class="fab fa-twitter"></i> Twitter
+                                </a>
+                                <a href="https://${authorProfile.contact.linkedin}" target="_blank" class="contact-link">
+                                    <i class="fab fa-linkedin"></i> LinkedIn
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                modal.style.display = 'flex';
+            }
         }
 
         function closeModal() {
@@ -460,10 +1901,21 @@
             }
         }
 
+        // Add this function to generate random view count
+        function generateRandomViews() {
+            return Math.floor(Math.random() * (12000 - 100 + 1)) + 100;
+        }
+
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
             checkLoginStatus();
-            displayFolders(publishedFolders);
+            // Add random views to each folder
+            publishedFolders.forEach(folder => {
+                folder.views = generateRandomViews();
+            });
+            filteredFolders = [...publishedFolders];
+            sortedFolders = [...publishedFolders];
+            displayFolders();
         });
 
         // Add event listener for Enter key in search input
@@ -480,6 +1932,60 @@
                 closeModal();
             }
         };
+
+        function updatePagination() {
+            const resultsPerPage = parseInt(document.getElementById('resultsPerPage').value);
+            const totalPages = Math.ceil(sortedFolders.length / resultsPerPage);
+            const paginationContainer = document.getElementById('pagination');
+            
+            // Reset to first page if current page is beyond the new total pages
+            if (currentPage > totalPages) {
+                currentPage = 1;
+            }
+            
+            let paginationHtml = `
+                <button onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>First</button>
+                <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+            `;
+
+            // Show page numbers with ellipsis for large ranges
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (startPage > 1) {
+                paginationHtml += `<button onclick="changePage(1)">1</button>`;
+                if (startPage > 2) {
+                    paginationHtml += `<span class="pagination-ellipsis">...</span>`;
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHtml += `
+                    <button onclick="changePage(${i})" class="${currentPage === i ? 'active' : ''}">${i}</button>
+                `;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHtml += `<span class="pagination-ellipsis">...</span>`;
+                }
+                paginationHtml += `<button onclick="changePage(${totalPages})">${totalPages}</button>`;
+            }
+
+            paginationHtml += `
+                <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+                <button onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>Last</button>
+            `;
+
+            paginationContainer.innerHTML = paginationHtml;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            displayFolders();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
 </body>
 </html> 

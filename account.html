@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account - Settings</title>
+    <title>My Account - Climate Resilience Library</title>
+    <link rel="stylesheet" href="chatbot.css">
     <style>
         * {
             margin: 0;
@@ -560,6 +561,7 @@
         </main>
     </div>
 
+    <script src="chatbot.js"></script>
     <script>
         // Check if user is logged in
         function checkAuth() {
@@ -690,6 +692,11 @@
                 </p>
             `;
 
+            const folderActions = document.createElement('div');
+            folderActions.style.display = 'flex';
+            folderActions.style.gap = '0.5rem';
+            folderActions.style.alignItems = 'center';
+
             const shareDropdown = document.createElement('div');
             shareDropdown.className = 'share-dropdown';
             shareDropdown.innerHTML = `
@@ -724,8 +731,15 @@
                 </div>
             `;
 
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'bookmark-btn delete';
+            deleteButton.innerHTML = '🗑️ Delete Folder';
+            deleteButton.onclick = () => deleteFolder(folderId);
+
+            folderActions.appendChild(shareDropdown);
+            folderActions.appendChild(deleteButton);
             folderHeader.appendChild(folderInfo);
-            folderHeader.appendChild(shareDropdown);
+            folderHeader.appendChild(folderActions);
             bookmarksList.appendChild(folderHeader);
             
             // Update the sharing status display
@@ -1037,6 +1051,41 @@
                 tab.onclick = () => showFolderBookmarks(folder.id);
                 folderTabs.appendChild(tab);
             });
+        }
+
+        function deleteFolder(folderId) {
+            if (confirm('Are you sure you want to delete this folder? All bookmarks in this folder will be permanently deleted.')) {
+                const folders = JSON.parse(localStorage.getItem('bookmarkFolders')) || [];
+                const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
+                const folderSharing = JSON.parse(localStorage.getItem('folderSharing')) || {};
+
+                // Remove folder from folders array
+                const updatedFolders = folders.filter(f => f.id !== folderId);
+                localStorage.setItem('bookmarkFolders', JSON.stringify(updatedFolders));
+
+                // Remove folder's bookmarks
+                delete bookmarks[folderId];
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+
+                // Remove folder's sharing settings
+                delete folderSharing[folderId];
+                localStorage.setItem('folderSharing', JSON.stringify(folderSharing));
+
+                // Reload bookmarks and show the first available folder
+                loadBookmarks();
+                if (updatedFolders.length > 0) {
+                    showFolderBookmarks(updatedFolders[0].id);
+                } else {
+                    document.getElementById('bookmarksList').innerHTML = `
+                        <div class="empty-folder">
+                            <p style="text-align: center; color: #666; padding: 2rem;">
+                                No folders yet.<br>
+                                Create a new folder to start organizing your bookmarks.
+                            </p>
+                        </div>
+                    `;
+                }
+            }
         }
     </script>
 </body>
